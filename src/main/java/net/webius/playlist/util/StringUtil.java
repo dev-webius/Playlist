@@ -33,16 +33,26 @@ public class StringUtil {
                 .replaceAll(">", "&gt;")
                 .replaceAll("\r\n", "<br/>")
                 .replaceAll("\"", "&quot;")
-                .replaceAll(" ", "&nbsp;");
+                .replaceAll("  ", "&nbsp;")
+                .replaceAll("&tag-on;", "<")
+                .replaceAll("&tag-off;", ">")
+                .replaceAll("&tag-str;", "\"")
+                .replaceAll("&tag-sp;", " ")
+                .replaceAll("&link-off;", "</a>");
     }
 
     public static String unpack(String val) {
         return val
-                .replaceAll("&nbsp;", " ")
                 .replaceAll("&quot;", "\"")
                 .replaceAll("<br/>", "\r\n")
                 .replaceAll("&gt;", ">")
-                .replaceAll("&lt;", "<");
+                .replaceAll("&lt;", "<")
+                .replaceAll("</a>", "&link-off;")
+                .replaceAll(" ", "&tag-sp;")
+                .replaceAll("\"", "&tag-str;")
+                .replaceAll(">", "&tag-off;")
+                .replaceAll("<", "&tag-on;")
+                .replaceAll("&nbsp;", "  ");
     }
 
     public static Boolean isLimit(String val, int limit) {

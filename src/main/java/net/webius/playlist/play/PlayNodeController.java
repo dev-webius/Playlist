@@ -26,12 +26,14 @@ public class PlayNodeController {
     private final PlayNodeServiceImpl playNodeService;
     private final PlatformUtil platformUtil;
     private final HostConnectionUtil hostConnectionUtil;
+    private final PlayCheckUtil playCheckUtil;
 
-    public PlayNodeController(PlayServiceImpl playService, PlayNodeServiceImpl playNodeService, PlatformUtil platformUtil, HostConnectionUtil hostConnectionUtil) {
+    public PlayNodeController(PlayServiceImpl playService, PlayNodeServiceImpl playNodeService, PlatformUtil platformUtil, HostConnectionUtil hostConnectionUtil, PlayCheckUtil playCheckUtil) {
         this.playService = playService;
         this.playNodeService = playNodeService;
         this.platformUtil = platformUtil;
         this.hostConnectionUtil = hostConnectionUtil;
+        this.playCheckUtil = playCheckUtil;
     }
 
     @GetMapping("/play/{listId}")
@@ -374,8 +376,16 @@ public class PlayNodeController {
                 return "/play/alert";
             }
 
-            // 데이터 처리
+            // 데이터 검증
             PlayNodeWriteVO nodeWriteVO = new PlayNodeWriteVO(pid, nodeIdx, name, url, videoId, thumb, platformCode + "");
+            PlayAlertVO alertVO = playCheckUtil.verifyNode(nodeWriteVO);
+            if (alertVO != null) {
+                // 검증 오류가 발생한 경우
+                modelMap.addAttribute("alert", alertVO);
+                return "/play/alert";
+            }
+
+            // 데이터 처리
             if (playNodeService.write(nodeWriteVO)) {
                 // 정상적으로 동작한 경우
                 modelMap.addAttribute("alert", new PlayAlertVO("ok", "추가되었습니다", "/play/" + listId));
@@ -498,8 +508,16 @@ public class PlayNodeController {
                 return "/play/alert";
             }
 
-            // 데이터 처리
+            // 데이터 검증
             PlayNodeEditVO nodeEditVO = new PlayNodeEditVO(pid, nodeId, name, url, videoId, thumb, platformCode + "");
+            PlayAlertVO alertVO = playCheckUtil.verifyNode(nodeEditVO);
+            if (alertVO != null) {
+                // 검증 오류가 발생한 경우
+                modelMap.addAttribute("alert", alertVO);
+                return "/play/alert";
+            }
+
+            // 데이터 처리
             if (playNodeService.edit(nodeEditVO)) {
                 // 정상적으로 동작한 경우
                 modelMap.addAttribute("alert", new PlayAlertVO("ok", "수정되었습니다.", "/play/" + listId));

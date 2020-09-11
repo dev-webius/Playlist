@@ -31,4 +31,18 @@ public class PlayCheckUtil {
     public PlayAlertVO verifyWrite(PlayListEditVO listEditVO) {
         return verifyWrite(new PlayListWriteVO(listEditVO.getOwner(), listEditVO.getIdx(), listEditVO.getTitle()));
     }
+
+    public PlayAlertVO verifyNode(PlayNodeWriteVO nodeWriteVO) {
+        if (!StringUtil.isLimit(nodeWriteVO.getName(), TINYTEXT))
+            return new PlayAlertVO("warn", "제목이 너무 깁니다.");
+
+        if (nodeWriteVO.getName().equals(""))
+            return new PlayAlertVO("warn", "제목을 입력해주세요.");
+        return null;
+    }
+
+    // PlayNodeEditVO -> PlayNodeWriteVO
+    public PlayAlertVO verifyNode(PlayNodeEditVO nodeEditVO) {
+        return verifyNode(new PlayNodeWriteVO(nodeEditVO.getPid(), nodeEditVO.getIdx(), nodeEditVO.getName(), nodeEditVO.getUrl(), nodeEditVO.getVid(), nodeEditVO.getThumb(), nodeEditVO.getType()));
+    }
 }
